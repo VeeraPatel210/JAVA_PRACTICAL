@@ -33,32 +33,36 @@ public class MiniBank {
 
         System.out.println("Large withdrawal successful: " + result);
 
-        System.out.println("\nPractical 3:");
-
         Account a1 = new Account("Riya", 4000);
         Account a2 = new Account(a1);
 
+        System.out.println("\nPractical 3:");
         System.out.println(a1);
         System.out.println("Accounts equal: " + a1.equals(a2));
-        System.out.println("Account hash: " + a1.hashCode());
         System.out.println("Is Account: " + (a1 instanceof Account));
 
-        Customer customer = new Customer(
-            "Riya", "riya@gmail.com", "9876543210"
-        );
+        Customer customer = new Customer("Riya", "riya@gmail.com", "9876543210");
+        customer.setAddress(new Customer.Address("University Road", "Anand", "388001"));
+        System.out.println("Customer address: " + customer.getAddress().getCity());
+        System.out.println("Customer cloned: " + customer.clone().getName());
 
-        Customer.Address address = new Customer.Address(
-            "University Road", "Anand", "388001"
-        );
+        System.out.println("\nPractical 4: Validation");
 
-        customer.setAddress(address);
+        System.out.println("Valid mobile: " + Validator.isValidMobile("9876543210"));
+        System.out.println("Invalid mobile: " + Validator.isValidMobile("12345"));
+        System.out.println("Valid email: " + Validator.isValidEmail("abc@gmail.com"));
+        System.out.println("Invalid email: " + Validator.isValidEmail("abc"));
+        System.out.println("Valid PAN: " + Validator.isValidPan("ABCDE1234F"));
+        System.out.println("Invalid PAN: " + Validator.isValidPan("12345"));
+        System.out.println("Valid IFSC: " + Validator.isValidIfsc("SBIN0001234"));
+        System.out.println("Invalid IFSC: " + Validator.isValidIfsc("123"));
 
-        System.out.println("Customer address: "
-                + customer.getAddress().getCity());
+        Command command = CommandParser.parse("DEPOSIT AC0001 500");
+        System.out.println("Command type: " + command.type());
+        System.out.println("Account number: " + command.accountNumber());
+        System.out.println("Amount: " + command.amount());
 
-        Customer copy = customer.clone();
-        System.out.println("Customer cloned: "
-                + copy.getName().equals(customer.getName()));
+        System.out.println("\n" + StatementFormatter.buildStatement(accounts[0]));
 
         int choice = 0;
 

@@ -12,9 +12,9 @@ public class MiniBank {
         Customer c1 = new Customer("Riya", "riya@gmail.com", "9876543210");
         Customer c2 = new Customer("Aarav", "aarav@gmail.com", "9876543211");
 
-        System.out.println("\nCustomer IDs:");
-        System.out.println(c1.getName() + ": " + c1.getCustomerId());
-        System.out.println(c2.getName() + ": " + c2.getCustomerId());
+        System.out.println("\nCustomer Details:");
+        System.out.println(c1.getCustomerId() + " | " + c1.getName());
+        System.out.println(c2.getCustomerId() + " | " + c2.getName());
 
         Account[] accounts = {
             new Account("Riya", 5000),
@@ -28,12 +28,37 @@ public class MiniBank {
 
         System.out.println("\nAccount Details:");
         for (Account account : accounts) {
-            System.out.println(account.getAccountNumber() + " | "
-                    + account.getOwnerName() + " | Balance: "
-                    + account.getBalance());
+            System.out.println(account);
         }
 
         System.out.println("Large withdrawal successful: " + result);
+
+        System.out.println("\nPractical 3:");
+
+        Account a1 = new Account("Riya", 4000);
+        Account a2 = new Account(a1);
+
+        System.out.println(a1);
+        System.out.println("Accounts equal: " + a1.equals(a2));
+        System.out.println("Account hash: " + a1.hashCode());
+        System.out.println("Is Account: " + (a1 instanceof Account));
+
+        Customer customer = new Customer(
+            "Riya", "riya@gmail.com", "9876543210"
+        );
+
+        Customer.Address address = new Customer.Address(
+            "University Road", "Anand", "388001"
+        );
+
+        customer.setAddress(address);
+
+        System.out.println("Customer address: "
+                + customer.getAddress().getCity());
+
+        Customer copy = customer.clone();
+        System.out.println("Customer cloned: "
+                + copy.getName().equals(customer.getName()));
 
         int choice = 0;
 

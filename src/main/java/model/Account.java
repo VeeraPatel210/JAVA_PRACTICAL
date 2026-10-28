@@ -33,15 +33,17 @@ public abstract class Account implements Transactable, InterestBearing {
     public abstract boolean canWithdraw(long amount);
 
     @Override
-    public void deposit(long amount) throws InvalidAmountException {
+    public synchronized void deposit(long amount)
+            throws InvalidAmountException {
         if (amount <= 0) {
             throw new InvalidAmountException("Amount must be positive");
         }
+
         balance += amount;
     }
 
     @Override
-    public boolean withdraw(long amount)
+    public synchronized boolean withdraw(long amount)
             throws InsufficientFundsException, InvalidAmountException {
         if (amount <= 0) {
             throw new InvalidAmountException("Amount must be positive");

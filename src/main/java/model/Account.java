@@ -1,69 +1,30 @@
 
 package model;
 
-import model.annotation.Id;
-import model.annotation.Positive;
-import model.annotation.MaxLength;
 import java.io.Serializable;
-import java.util.Objects;
 
-public abstract class Account
-        implements Transactable, InterestBearing, Serializable {
+public abstract class Account implements Transactable, InterestBearing, Serializable, Comparable<Account> {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private final String accountNumber;
-
-    @MaxLength(10)
-    private String ownerName;
-
-    @Positive
+    protected String accountNumber;
     protected long balance;
+    protected String ownerName;
 
-    private boolean active;
-    private static int counter = 0;
-
-    private static String generateNumber() {
-        return String.format("AC%04d", ++counter);
-    }
+    private static int count = 1000;
 
     public Account(String ownerName, long balance) {
-        this.accountNumber = generateNumber();
+        this.accountNumber = "AC" + (++count);
         this.ownerName = ownerName;
         this.balance = balance;
-        this.active = true;
-    }
-
-    public abstract boolean canWithdraw(long amount);
-
-    @Override
-    public synchronized void deposit(long amount)
-            throws InvalidAmountException {
-        if (amount <= 0) {
-            throw new InvalidAmountException("Amount must be positive");
-        }
-        balance += amount;
-    }
-
-    @Override
-    public synchronized boolean withdraw(long amount)
-            throws InsufficientFundsException, InvalidAmountException {
-        if (amount <= 0) {
-            throw new InvalidAmountException("Amount must be positive");
-        }
-
-        if (!canWithdraw(amount)) {
-            throw new InsufficientFundsException(
-                    Math.max(0, amount - balance));
-        }
-
-        balance -= amount;
-        return true;
     }
 
     public String getAccountNumber() {
         return accountNumber;
+    }
+
+    public long getBalance() {
+        return balance;
     }
 
     public String getOwnerName() {
@@ -71,28 +32,33 @@ public abstract class Account
     }
 
     @Override
-    public long getBalance() {
-        return balance;
+    public synchronized void deposit(long amount) throws InvalidAmountException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be positive");
+        }
+        balance += amount;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean canWithdraw(long amount) {
+        return amount > 0 && amount <= balance;
+    }
+
+    @Override
+    public synchronized boolean withdraw(long amount) {
+        if (canWithdraw(amount)) {
+            balance -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(Account other) {
+        return this.accountNumber.compareTo(other.accountNumber);
     }
 
     @Override
     public String toString() {
-        return accountNumber + " | " + ownerName + " | " + balance;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Account other)) return false;
-        return accountNumber.equals(other.accountNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(accountNumber);
+        return accountNumber + " | " + ownerName + " | Balance: " + balance;
     }
 }

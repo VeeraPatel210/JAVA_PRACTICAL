@@ -4,9 +4,14 @@ package model;
 import model.annotation.Id;
 import model.annotation.Positive;
 import model.annotation.MaxLength;
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Account implements Transactable, InterestBearing {
+public abstract class Account
+        implements Transactable, InterestBearing, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     private final String accountNumber;
 
@@ -38,7 +43,6 @@ public abstract class Account implements Transactable, InterestBearing {
         if (amount <= 0) {
             throw new InvalidAmountException("Amount must be positive");
         }
-
         balance += amount;
     }
 

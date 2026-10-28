@@ -1,42 +1,63 @@
 
 package service;
 
-import model.*;
+
+import model.Account;
+import model.SavingsAccount;
+import model.CurrentAccount;
+import model.FixedDepositAccount;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
 
 public class MiniBank {
+
     public static void main(String[] args) {
-        Account account = new SavingsAccount("Dhruv", 1000, 100);
 
-        System.out.println("MiniBank - Practical 9");
-        System.out.println("Initial balance: " + account.getBalance());
+        try {
+            Path dataFolder = Path.of("data");
+            Path logFolder = dataFolder.resolve("logs");
+            Path accountFile = dataFolder.resolve("accounts.dat");
+            Path reportFile = dataFolder.resolve("report.txt");
 
-        int threadCount = 10;
-        int times = 1000;
-        long amount = 10;
+            Files.createDirectories(logFolder);
 
-        Thread[] threads = new Thread[threadCount];
+            Account[] accounts = {
+                new SavingsAccount("Dhruv", 5000, 500),
+                new CurrentAccount("Bhavy", 8000, 2000),
+                new FixedDepositAccount("Pratik", 10000, 12)
+            };
 
-        for (int i = 0; i < threadCount; i++) {
-            AccountWorker worker =
-                    new AccountWorker(account, times, amount);
+            TransactionLog.append(
+                logFolder.resolve("transactions.txt"),
+                "Deposit,500"
+            );
 
-            threads[i] = new Thread(worker, "Worker-" + (i + 1));
-            threads[i].start();
-        }
+            TransactionLog.append(
+                logFolder.resolve("transactions.txt"),
+                "Withdrawal,200"
+            );
 
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Thread interrupted.");
-                return;
+            StatePersister.save(accounts, accountFile);
+            System.out.println("Accounts saved successfully.");
+
+            Account[] loadedAccounts = StatePersister.load(accountFile);
+
+            System.out.println("\nLoaded Accounts:");
+            for (Account account : loadedAccounts) {
+                System.out.println(account);
             }
-        }
 
-        System.out.println("All threads completed.");
-        System.out.println("Expected balance: "
-                + (1000 + (long) threadCount * times * amount));
-        System.out.println("Final balance: " + account.getBalance());
+            ReportGenerator.generate(logFolder, reportFile);
+
+            System.out.println("\nReport:");
+            System.out.println(Files.readString(reportFile));
+
+            System.out.println("Practical 11 completed successfully.");
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 }

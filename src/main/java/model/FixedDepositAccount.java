@@ -2,6 +2,8 @@
 package model;
 
 public class FixedDepositAccount extends Account {
+    private static final long serialVersionUID = 1L;
+
     private int months;
 
     public FixedDepositAccount(String name, long balance, int months) {

@@ -1,51 +1,57 @@
 
 import java.util.Objects;
 
-public class Account {
+public abstract class Account {
     private final String accountNumber;
     private String ownerName;
-    private long balance;
+    protected long balance;
     private boolean active;
-    private static int accountCounter = 0;
+    private static int counter = 0;
 
-    private static String generateAccountNumber() {
-        return String.format("AC%04d", ++accountCounter);
+    private static String generateNumber() {
+        return String.format("AC%04d", ++counter);
     }
 
-    public Account(String ownerName, long openingBalance) {
-        this.accountNumber = generateAccountNumber();
+    public Account(String ownerName, long balance) {
+        this.accountNumber = generateNumber();
         this.ownerName = ownerName;
-        this.balance = openingBalance;
+        this.balance = balance;
         this.active = true;
     }
 
-    public Account(String ownerName) {
-        this(ownerName, 0);
-    }
+    public abstract double interestRate();
 
-    public Account(Account other) {
-        this.accountNumber = other.accountNumber;
-        this.ownerName = other.ownerName;
-        this.balance = other.balance;
-        this.active = other.active;
-    }
+    public abstract boolean canWithdraw(long amount);
 
     public void deposit(long amount) {
-        if (amount > 0) balance += amount;
+        if (amount > 0) {
+            balance += amount;
+        }
     }
 
     public boolean withdraw(long amount) {
-        if (amount > 0 && balance >= amount) {
+        if (amount > 0 && canWithdraw(amount)) {
             balance -= amount;
             return true;
         }
         return false;
     }
 
-    public String getAccountNumber() { return accountNumber; }
-    public String getOwnerName() { return ownerName; }
-    public long getBalance() { return balance; }
-    public boolean isActive() { return active; }
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public long getBalance() {
+        return balance;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 
     @Override
     public String toString() {

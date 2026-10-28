@@ -1,3 +1,4 @@
+
 package model;
 
 public class CurrentAccount extends Account {
@@ -16,5 +17,9 @@ public class CurrentAccount extends Account {
     @Override
     public boolean canWithdraw(long amount) {
         return amount > 0 && balance - amount >= -overdraftLimit;
+    }
+
+    public long getOverdraftLimit() {
+        return overdraftLimit;
     }
 }

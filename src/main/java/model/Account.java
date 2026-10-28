@@ -1,18 +1,21 @@
-package model;
-import model.annotation.Id;
-import model.annotation.MaxLength;
-import model.annotation.Positive;
 
+package model;
+
+import model.annotation.Id;
+import model.annotation.Positive;
+import model.annotation.MaxLength;
 import java.util.Objects;
 
 public abstract class Account implements Transactable, InterestBearing {
-    
     @Id
-private final String accountNumber;
- @MaxLength(10)
+    private final String accountNumber;
+
+    @MaxLength(10)
     private String ownerName;
-@Positive
-protected long balance;
+
+    @Positive
+    protected long balance;
+
     private boolean active;
     private static int counter = 0;
 
@@ -30,19 +33,27 @@ protected long balance;
     public abstract boolean canWithdraw(long amount);
 
     @Override
-    public void deposit(long amount) {
-        if (amount > 0) {
-            balance += amount;
+    public void deposit(long amount) throws InvalidAmountException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be positive");
         }
+        balance += amount;
     }
 
     @Override
-    public boolean withdraw(long amount) {
-        if (amount > 0 && canWithdraw(amount)) {
-            balance -= amount;
-            return true;
+    public boolean withdraw(long amount)
+            throws InsufficientFundsException, InvalidAmountException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be positive");
         }
-        return false;
+
+        if (!canWithdraw(amount)) {
+            throw new InsufficientFundsException(
+                    Math.max(0, amount - balance));
+        }
+
+        balance -= amount;
+        return true;
     }
 
     public String getAccountNumber() {

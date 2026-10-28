@@ -1,6 +1,8 @@
+
 package model;
 
 public interface Transactable {
-    void deposit(long amount);
-    boolean withdraw(long amount);
+    void deposit(long amount) throws InvalidAmountException;
+    boolean withdraw(long amount)
+            throws InsufficientFundsException, InvalidAmountException;
 }

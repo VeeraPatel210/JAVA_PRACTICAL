@@ -1,6 +1,6 @@
 
 package model;
-
+import model.annotation.Id;
 import java.io.Serializable;
 
 public class Customer implements Serializable {
@@ -10,6 +10,7 @@ public class Customer implements Serializable {
     private String name;
     private String email;
     private String mobile;
+    @Id
     private final String customerId;
 
     private static int count = 100;

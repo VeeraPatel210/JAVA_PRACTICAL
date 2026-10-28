@@ -1,12 +1,12 @@
 
 package model;
-
+import model.annotation.Id;
 import java.io.Serializable;
 
 public abstract class Account implements Transactable, InterestBearing, Serializable, Comparable<Account> {
 
     private static final long serialVersionUID = 1L;
-
+    @Id
     protected String accountNumber;
     protected long balance;
     protected String ownerName;

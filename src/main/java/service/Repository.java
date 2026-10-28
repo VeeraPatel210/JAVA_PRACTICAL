@@ -4,24 +4,30 @@ package service;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import model.annotation.Id;
 
 public class Repository<T> {
 
-    private HashMap<String, T> data = new HashMap<>();
+    private final Map<String, T> data = new HashMap<>();
 
     public T save(T entity) {
         try {
-            for (Field field : entity.getClass().getDeclaredFields()) {
-                if (field.isAnnotationPresent(Id.class)) {
-                    field.setAccessible(true);
-                    String id = String.valueOf(field.get(entity));
-                    data.put(id, entity);
-                    return entity;
+            Class<?> type = entity.getClass();
+
+            while (type != null) {
+                for (Field field : type.getDeclaredFields()) {
+                    if (field.isAnnotationPresent(Id.class)) {
+                        field.setAccessible(true);
+                        String id = String.valueOf(field.get(entity));
+                        data.put(id, entity);
+                        return entity;
+                    }
                 }
+                type = type.getSuperclass();
             }
 
-            throw new RuntimeException("No @Id field found");
+            throw new IllegalArgumentException("No @Id field found");
 
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -53,11 +59,9 @@ public class Repository<T> {
         }
 
         double sum = 0;
-
         for (N value : values) {
             sum += value.doubleValue();
         }
-
         return sum / values.length;
     }
 }

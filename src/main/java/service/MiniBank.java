@@ -59,5 +59,18 @@ public class MiniBank {
 
         System.out.println("\n"
                 + StatementFormatter.buildStatement(accounts[0]));
+
+                
+System.out.println("\nPractical 7: Annotation Validation");
+
+Account invalidAccount =
+        new SavingsAccount("VeryLongTestName", -100, 0);
+
+String[] errors = AnnotationValidator.validate(invalidAccount);
+
+for (String error : errors) {
+    System.out.println(error);
+}
+
     }
 }
